@@ -1,8 +1,6 @@
 #include "LogClient.h"
 
-LogClient::LogClient() {};
-
-LogClient::LogClient(const char *ip_address = DEFAULT_IP_ADDRESS)
+LogClient::LogClient(const char *ip_address, const char *port)
 {
 	WSADATA wsaData;
 	struct addrinfo* result = NULL,
@@ -27,7 +25,7 @@ LogClient::LogClient(const char *ip_address = DEFAULT_IP_ADDRESS)
 	hints.ai_protocol = IPPROTO_TCP;
 
 	// Resolve the server address and port
-	iResult = getaddrinfo(ip_address, DEFAULT_PORT, &hints, &result);
+	iResult = getaddrinfo(ip_address, port, &hints, &result);
 	if (iResult != 0)
 	{
 		printf("getaddrinfo failed with error: %d\n", iResult);
@@ -39,7 +37,9 @@ LogClient::LogClient(const char *ip_address = DEFAULT_IP_ADDRESS)
 	for (ptr = result; ptr != NULL; ptr = ptr->ai_next)
 	{
 		// Create a SOCKET for connecting to server
-		m_ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
+		m_ConnectSocket = socket(
+			ptr->ai_family,
+			ptr->ai_socktype,
 			ptr->ai_protocol);
 		if (m_ConnectSocket == INVALID_SOCKET)
 		{
@@ -68,17 +68,9 @@ LogClient::LogClient(const char *ip_address = DEFAULT_IP_ADDRESS)
 		return;
 	}
 
-	// Send an initial buffer
-	iResult = send(m_ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
-	if (iResult == SOCKET_ERROR)
-	{
-		printf("send failed with error: %d\n", WSAGetLastError());
-		closesocket(m_ConnectSocket);
-		WSACleanup();
-		return;
-	}
+	printf("Started client listening to %s on port %s\n", ip_address, port);
 
-	printf("Bytes Sent: %ld\n", iResult);
+	SendString("Hello world\n");
 
 	// shutdown the connection since no more data will be sent
 	iResult = shutdown(m_ConnectSocket, SD_SEND);
@@ -95,7 +87,10 @@ LogClient::LogClient(const char *ip_address = DEFAULT_IP_ADDRESS)
 	{
 		iResult = recv(m_ConnectSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
+		{
 			printf("Bytes received: %d\n", iResult);
+    		printf("Received: %s", recvbuf);
+		}
 		else if (iResult == 0)
 			printf("Connection closed\n");
 		else
@@ -109,4 +104,18 @@ LogClient::~LogClient()
 	// cleanup
 	closesocket(m_ConnectSocket);
 	WSACleanup();
+}
+
+bool LogClient::SendString(const char* buf)
+{
+	int iResult = send(m_ConnectSocket, buf, (int)strlen(buf), 0);
+	if (iResult == SOCKET_ERROR)
+	{
+		printf("send failed with error: %d\n", WSAGetLastError());
+		closesocket(m_ConnectSocket);
+		WSACleanup();
+		return false;
+	}
+	printf("Sent: %s", buf);
+	return true;
 }

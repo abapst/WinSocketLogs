@@ -35,16 +35,48 @@ private:
     std::vector <std::string> tokens;
 };
 
+void print_usage()
+{
+    printf("\n");
+    printf("  Usage:\n");
+    printf("      -server              Start a TCP server\n");
+    printf("      -client              Start a client that listens to a server\n");
+    printf("      -ip (optional)       IP address use\n");
+    printf("      -port (optional)     Port to use\n");
+    printf("\n");
+}
+
 int main(int argc, char **argv)
 {
     InputParser input(argc, argv);
 
+    const char* ip_address = DEFAULT_IP_ADDRESS;
+    const char* port = DEFAULT_PORT;
+
+    if ((argc == 1) || input.cmdOptionExists("-h"))
+    {
+        print_usage();
+        return 0;
+    }
+
+    if (input.cmdOptionExists("-port"))
+    {
+        port = input.getCmdOption("-port").c_str();
+    }
+
+    if (input.cmdOptionExists("-ip"))
+    {
+        ip_address = input.getCmdOption("-ip").c_str();
+    }
+
     if (input.cmdOptionExists("-server"))
     {
-        LogServer server; // start server
+        LogServer server(port); // start server
     }
     else if (input.cmdOptionExists("-client"))
     {
-        LogClient client("localhost"); // start client on localhost
+        LogClient client(ip_address, port); // start client
     }
+
+    return 0;
 }

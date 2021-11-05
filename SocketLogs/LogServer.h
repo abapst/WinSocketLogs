@@ -10,13 +10,14 @@
 #pragma comment (lib, "Ws2_32.lib")
 
 #define DEFAULT_BUFLEN        512
-#define DEFAULT_PORT          "27015"
 
 class LogServer
 {
 public:
-	LogServer();
+	LogServer(const char *port);
 	~LogServer();
+
+	bool SendString(const char* buf);
 
 private:
 

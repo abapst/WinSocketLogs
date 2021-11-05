@@ -11,15 +11,14 @@
 #pragma comment (lib, "AdvApi32.lib")
 
 #define DEFAULT_BUFLEN        512
-#define DEFAULT_IP_ADDRESS    "localhost"
-#define DEFAULT_PORT          "27015"
 
 class LogClient
 {
 public:
-	LogClient();
-	LogClient(const char *ip_address);
+	LogClient(const char *ip_address, const char *port);
 	~LogClient();
+
+	bool SendString(const char* buf);
 
 private:
 

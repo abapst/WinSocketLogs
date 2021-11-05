@@ -1,6 +1,6 @@
 #include "LogServer.h"
 
-LogServer::LogServer()
+LogServer::LogServer(const char *port)
 {
 	WSADATA wsaData;
 	int iResult;
@@ -27,7 +27,7 @@ LogServer::LogServer()
     hints.ai_flags = AI_PASSIVE;
 
     // Resolve the server address and port
-    iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
+    iResult = getaddrinfo(NULL, port, &hints, &result);
     if (iResult != 0)
     {
         printf("getaddrinfo failed with error: %d\n", iResult);
@@ -67,6 +67,7 @@ LogServer::LogServer()
         return;
     }
 
+	printf("Started server listening on port %s\n", port);
     printf("Waiting for connection...\n");
 
     // Accept a client socket
@@ -90,16 +91,10 @@ LogServer::LogServer()
         {
             printf("Bytes received: %d\n", iResult);
 
+            printf("Received: %s", recvbuf);
+
             // Echo the buffer back to the sender
-            iSendResult = send(m_ClientSocket, recvbuf, iResult, 0);
-            if (iSendResult == SOCKET_ERROR)
-            {
-                printf("send failed with error: %d\n", WSAGetLastError());
-                closesocket(m_ClientSocket);
-                WSACleanup();
-                return;
-            }
-            printf("Bytes sent: %d\n", iSendResult);
+            SendString(recvbuf);
         }
         else if (iResult == 0)
             printf("Connection closing...\n");
@@ -128,4 +123,18 @@ LogServer::~LogServer()
 	// cleanup
 	closesocket(m_ClientSocket);
 	WSACleanup();
+}
+
+bool LogServer::SendString(const char* buf)
+{
+    int iSendResult = send(m_ClientSocket, buf, (int)strlen(buf), 0);
+    if (iSendResult == SOCKET_ERROR)
+    {
+        printf("send failed with error: %d\n", WSAGetLastError());
+        closesocket(m_ClientSocket);
+        WSACleanup();
+        return false;
+    }
+	printf("Sent: %s", buf);
+    return true;
 }

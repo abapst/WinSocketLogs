@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 {
     InputParser input(argc, argv);
 
-    const char* ip_address = DEFAULT_IP_ADDRESS;
+    const char* ip_address = DEFAULT_IP;
     const char* port = DEFAULT_PORT;
 
     if ((argc == 1) || input.cmdOptionExists("-h"))
@@ -72,6 +72,16 @@ int main(int argc, char **argv)
     if (input.cmdOptionExists("-server"))
     {
         LogServer server(port); // start server
+
+        // send a ping every second
+		int cnt = 0;
+		do
+		{
+			server.SendString("Ping %d\n", cnt);
+			Sleep(1000);
+			cnt++;
+		} while (true);
+
     }
     else if (input.cmdOptionExists("-client"))
     {

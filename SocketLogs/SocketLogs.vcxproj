@@ -142,11 +142,13 @@
     <ClCompile Include="SocketLogs.cpp" />
     <ClCompile Include="LogClient.cpp" />
     <ClCompile Include="LogServer.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SocketLogsCore.h" />
     <ClInclude Include="LogServer.h" />
     <ClInclude Include="LogClient.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -68,9 +68,7 @@ LogClient::LogClient(const char *ip_address, const char *port)
 		return;
 	}
 
-	printf("Started client listening to %s on port %s\n", ip_address, port);
-
-	SendString("Hello world\n");
+	printf("Started client connected to %s on port %s\n", ip_address, port);
 
 	// shutdown the connection since no more data will be sent
 	iResult = shutdown(m_ConnectSocket, SD_SEND);
@@ -88,15 +86,14 @@ LogClient::LogClient(const char *ip_address, const char *port)
 		iResult = recv(m_ConnectSocket, recvbuf, recvbuflen, 0);
 		if (iResult > 0)
 		{
-			printf("Bytes received: %d\n", iResult);
-    		printf("Received: %s", recvbuf);
+			std::cout << "Received: " << std::string(recvbuf).substr(0, iResult);
 		}
 		else if (iResult == 0)
-			printf("Connection closed\n");
+			continue;
 		else
 			printf("recv failed with error: %d\n", WSAGetLastError());
 
-	} while (iResult > 0);
+	} while (iResult >= 0);
 }
 
 LogClient::~LogClient()
@@ -106,16 +103,23 @@ LogClient::~LogClient()
 	WSACleanup();
 }
 
-bool LogClient::SendString(const char* buf)
+bool LogClient::SendString(const char* format, ...)
 {
-	int iResult = send(m_ConnectSocket, buf, (int)strlen(buf), 0);
-	if (iResult == SOCKET_ERROR)
-	{
-		printf("send failed with error: %d\n", WSAGetLastError());
-		closesocket(m_ConnectSocket);
-		WSACleanup();
-		return false;
-	}
+    char buf[256];
+    va_list args;
+    va_start(args, format);
+    vsprintf_s(buf, format, args);
+    va_end(args);
+
+    int iSendResult = send(m_ConnectSocket, buf, (int)strlen(buf), 0);
+    if (iSendResult == SOCKET_ERROR)
+    {
+        printf("send failed with error: %d\n", WSAGetLastError());
+        closesocket(m_ConnectSocket);
+        WSACleanup();
+        return false;
+    }
 	printf("Sent: %s", buf);
-	return true;
+    return true;
 }
+

@@ -1,4 +1,6 @@
+#include <string>
 #include "LogServer.h"
+#include "Utils.h"
 
 LogServer::LogServer(const char *port)
 {
@@ -71,7 +73,9 @@ LogServer::LogServer(const char *port)
     printf("Waiting for connection...\n");
 
     // Accept a client socket
-    m_ClientSocket = accept(m_ListenSocket, NULL, NULL);
+    struct sockaddr_in clientAddr = { 0 };
+    socklen_t socklen = sizeof(sockaddr_in);
+    m_ClientSocket = accept(m_ListenSocket, (struct sockaddr *) &clientAddr, &socklen);
     if (m_ClientSocket == INVALID_SOCKET)
     {
         printf("accept failed with error: %d\n", WSAGetLastError());
@@ -79,58 +83,38 @@ LogServer::LogServer(const char *port)
         WSACleanup();
         return;
     }
+    printClientInfo(clientAddr);
 
-    // No longer need server socket
+    // No longer need server listening socket
     closesocket(m_ListenSocket);
-
-    // Receive until the peer shuts down the connection
-    do
-    {
-        iResult = recv(m_ClientSocket, recvbuf, recvbuflen, 0);
-        if (iResult > 0)
-        {
-            printf("Bytes received: %d\n", iResult);
-
-            printf("Received: %s", recvbuf);
-
-            // Echo the buffer back to the sender
-            SendString(recvbuf);
-        }
-        else if (iResult == 0)
-            printf("Connection closing...\n");
-        else
-        {
-            printf("recv failed with error: %d\n", WSAGetLastError());
-            closesocket(m_ClientSocket);
-            WSACleanup();
-            return;
-        }
-    } while (iResult > 0);
-
-    // shutdown the connection since we're done
-    iResult = shutdown(m_ClientSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR)
-    {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
-        closesocket(m_ClientSocket);
-        WSACleanup();
-        return;
-    }
 }
 
 LogServer::~LogServer()
 {
+    printf("Shutting down server.");
+    int iResult = shutdown(m_ClientSocket, SD_SEND);
+    if (iResult == SOCKET_ERROR)
+    {
+        printf("shutdown failed with error: %d\n", WSAGetLastError());
+    }
+
 	// cleanup
 	closesocket(m_ClientSocket);
 	WSACleanup();
 }
 
-bool LogServer::SendString(const char* buf)
+bool LogServer::SendString(const char* format, ...)
 {
+    char buf[256];
+    va_list args;
+    va_start(args, format);
+    vsprintf_s(buf, format, args);
+    va_end(args);
+
     int iSendResult = send(m_ClientSocket, buf, (int)strlen(buf), 0);
     if (iSendResult == SOCKET_ERROR)
     {
-        printf("send failed with error: %d\n", WSAGetLastError());
+        printf("Send failed with error: %d\n", WSAGetLastError());
         closesocket(m_ClientSocket);
         WSACleanup();
         return false;

@@ -7,11 +7,13 @@
 #include <iostream>
 #include <Windows.h>
 #include <stdarg.h>
+#include <thread>
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
 
 #define DEFAULT_BUFLEN        512
+#define MAX_CLIENTS           1
 
 class LogServer
 {
@@ -23,6 +25,11 @@ public:
 
 private:
 
+	const char* m_Port;
+	std::thread m_ListenerThread;
+
 	SOCKET m_ListenSocket = INVALID_SOCKET;
 	SOCKET m_ClientSocket = INVALID_SOCKET;
+
+	void ListenerThread();
 };

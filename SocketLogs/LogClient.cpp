@@ -91,7 +91,7 @@ LogClient::LogClient(const char *ip_address, const char *port)
 		else if (iResult == 0)
 			continue;
 		else
-			printf("recv failed with error: %d\n", WSAGetLastError());
+			printf("Lost connection to host (error %d)\n", WSAGetLastError());
 
 	} while (iResult >= 0);
 }

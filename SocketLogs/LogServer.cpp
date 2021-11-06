@@ -4,15 +4,51 @@
 
 LogServer::LogServer(const char *port)
 {
+    m_Port = port;
+
+    // Start listener thread
+    m_ListenerThread = std::thread(&LogServer::ListenerThread, this);
+}
+
+LogServer::~LogServer()
+{
+    printf("Shutting down server.");
+    int iResult = shutdown(m_ClientSocket, SD_SEND);
+    if (iResult == SOCKET_ERROR)
+    {
+        printf("shutdown failed with error: %d\n", WSAGetLastError());
+    }
+
+	// cleanup
+	closesocket(m_ClientSocket);
+	WSACleanup();
+}
+
+bool LogServer::SendString(const char* format, ...)
+{
+    char buf[256];
+    va_list args;
+    va_start(args, format);
+    vsprintf_s(buf, format, args);
+    va_end(args);
+
+    int iSendResult = send(m_ClientSocket, buf, (int)strlen(buf), 0);
+    if (iSendResult == SOCKET_ERROR)
+    {
+        printf("Send failed with error: %d\n", WSAGetLastError());
+        return false;
+    }
+	printf("Sent: %s", buf);
+    return true;
+}
+
+void LogServer::ListenerThread()
+{
 	WSADATA wsaData;
 	int iResult;
 
     struct addrinfo* result = NULL;
     struct addrinfo hints;
-
-    int iSendResult;
-    char recvbuf[DEFAULT_BUFLEN];
-    int recvbuflen = DEFAULT_BUFLEN;
 
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -29,7 +65,7 @@ LogServer::LogServer(const char *port)
     hints.ai_flags = AI_PASSIVE;
 
     // Resolve the server address and port
-    iResult = getaddrinfo(NULL, port, &hints, &result);
+    iResult = getaddrinfo(NULL, m_Port, &hints, &result);
     if (iResult != 0)
     {
         printf("getaddrinfo failed with error: %d\n", iResult);
@@ -69,56 +105,23 @@ LogServer::LogServer(const char *port)
         return;
     }
 
-	printf("Started server listening on port %s\n", port);
+	printf("Started server listening on port %s\n", m_Port);
     printf("Waiting for connection...\n");
 
-    // Accept a client socket
-    struct sockaddr_in clientAddr = { 0 };
-    socklen_t socklen = sizeof(sockaddr_in);
-    m_ClientSocket = accept(m_ListenSocket, (struct sockaddr *) &clientAddr, &socklen);
-    if (m_ClientSocket == INVALID_SOCKET)
+	struct sockaddr_in clientAddr = { 0 };
+	socklen_t socklen = sizeof(sockaddr_in);
+    while (m_ClientSocket = accept(m_ListenSocket, (struct sockaddr *) &clientAddr, &socklen))
     {
-        printf("accept failed with error: %d\n", WSAGetLastError());
-        closesocket(m_ListenSocket);
-        WSACleanup();
-        return;
+		if (m_ClientSocket == INVALID_SOCKET)
+		{
+			printf("accept failed with error: %d\n", WSAGetLastError());
+			closesocket(m_ListenSocket);
+			WSACleanup();
+			return;
+		}
+		printClientInfo(clientAddr);
     }
-    printClientInfo(clientAddr);
 
     // No longer need server listening socket
     closesocket(m_ListenSocket);
-}
-
-LogServer::~LogServer()
-{
-    printf("Shutting down server.");
-    int iResult = shutdown(m_ClientSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR)
-    {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
-    }
-
-	// cleanup
-	closesocket(m_ClientSocket);
-	WSACleanup();
-}
-
-bool LogServer::SendString(const char* format, ...)
-{
-    char buf[256];
-    va_list args;
-    va_start(args, format);
-    vsprintf_s(buf, format, args);
-    va_end(args);
-
-    int iSendResult = send(m_ClientSocket, buf, (int)strlen(buf), 0);
-    if (iSendResult == SOCKET_ERROR)
-    {
-        printf("Send failed with error: %d\n", WSAGetLastError());
-        closesocket(m_ClientSocket);
-        WSACleanup();
-        return false;
-    }
-	printf("Sent: %s", buf);
-    return true;
 }

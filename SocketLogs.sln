@@ -4,26 +4,59 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SocketLogs", "SocketLogs\SocketLogs.vcxproj", "{27B72718-B701-4C57-AA1C-5A64F4D2074E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D} = {49675DA5-95D1-4F1C-9564-BDAC1DACE19D}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{D98757B3-F0A1-4844-973B-62B91B1CBC01}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SocketLogging", "Libraries\SocketLogging\SocketLogging.vcxproj", "{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F2DDD06A-351E-4D0F-A9B3-0511C126EC51}"
+	ProjectSection(SolutionItems) = preProject
+		SocketLogs.Paths.props = SocketLogs.Paths.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Debug|ARM64.Build.0 = Debug|ARM64
 		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Debug|x64.ActiveCfg = Debug|x64
 		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Debug|x64.Build.0 = Debug|x64
 		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Debug|x86.ActiveCfg = Debug|Win32
 		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Debug|x86.Build.0 = Debug|Win32
+		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Release|ARM64.ActiveCfg = Release|ARM64
+		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Release|ARM64.Build.0 = Release|ARM64
 		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Release|x64.ActiveCfg = Release|x64
 		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Release|x64.Build.0 = Release|x64
 		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Release|x86.ActiveCfg = Release|Win32
 		{27B72718-B701-4C57-AA1C-5A64F4D2074E}.Release|x86.Build.0 = Release|Win32
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Debug|ARM64.Build.0 = Debug|ARM64
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Debug|x64.ActiveCfg = Debug|x64
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Debug|x64.Build.0 = Debug|x64
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Debug|x86.ActiveCfg = Debug|Win32
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Debug|x86.Build.0 = Debug|Win32
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Release|ARM64.ActiveCfg = Release|ARM64
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Release|ARM64.Build.0 = Release|ARM64
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Release|x64.ActiveCfg = Release|x64
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Release|x64.Build.0 = Release|x64
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Release|x86.ActiveCfg = Release|Win32
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{49675DA5-95D1-4F1C-9564-BDAC1DACE19D} = {D98757B3-F0A1-4844-973B-62B91B1CBC01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C550BCA8-FB3D-42C5-BB9C-619C189915F6}

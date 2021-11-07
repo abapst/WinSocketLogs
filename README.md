@@ -1,3 +1,3 @@
 # WinSocketLogs
 
-Server/client interaction for live logs
+Lightweight server/client interaction for live diagnostic logging between two Windows devices.

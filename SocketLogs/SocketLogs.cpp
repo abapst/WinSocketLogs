@@ -1,7 +1,6 @@
-#include <iostream>
 #include <vector>
 
-#include "SocketLogsCore.h"
+#include "SocketLoggingCore.h"
 
 class InputParser
 {

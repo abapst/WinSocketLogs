@@ -179,7 +179,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Aleksander\source\repos\WinSocketLogs\Libraries\SocketLogging</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Libraries\SocketLogging</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

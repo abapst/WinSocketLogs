@@ -35,7 +35,7 @@ bool LogServer::SendString(const char* format, ...)
     int iSendResult = send(m_ClientSocket, buf, (int)strlen(buf), 0);
     if (iSendResult == SOCKET_ERROR)
     {
-        printf("Send failed with error: %d\n", WSAGetLastError());
+        printf("(Send failed: %d) %s", WSAGetLastError(), buf);
         return false;
     }
 	printf("Sent: %s", buf);
